@@ -7,7 +7,7 @@ var mustache = require('mustache')
 var path = require('path')
 
 var usage = `
-Create an web page to work through a detree decition tree.
+Create an web page to work through a detree decision tree.
 
 Usage: detree-html -d DATA -o DIRECTORY [options]
 
