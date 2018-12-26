@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset=UTF-8>
+    <title>{{title}}</title>
+  </head>
+  <body>
+    <header><h1>{{title}}</h1></header>
+    <main>
+      {{#question}}
+        <p class=question>{{text}}</p>
+        {{#answers}}
+        <p class=answer>
+          <a href="{{href}}">{{text}}</a>
+        </p>
+        {{/answers}}
+      {{/question}}
+      {{#decision}}
+        <p class=decision>
+          {{#href}}<a href="{{.}}">{{/href}}
+            {{text}}
+          {{#href}}</a>{{/href}}
+        </p>
+      {{/decision}}
+    </main>
+    {{#index}}
+    <footer>
+      <a href="{{.}}">Start over.</a>
+    </footer>
+    {{/index}}
+  </body>
+</html>

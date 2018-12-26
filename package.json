@@ -1,0 +1,19 @@
+{
+  "name": "detree-html",
+  "version": "0.0.0",
+  "description": "create webpages to work through detree decision trees",
+  "author": "Kyle E. Mitchell <kyle@kemitchell.com> (https://kemitchell.com/)",
+  "repository": "kemitchell/detree-html.js",
+  "bin": "bin",
+  "files": [
+    "bin",
+    "template.html"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "docopt": "^0.6.2",
+    "lamos": "^3.0.4",
+    "mkdirp": "^0.5.1",
+    "mustache": "^3.0.1"
+  }
+}

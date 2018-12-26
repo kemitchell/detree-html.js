@@ -1,0 +1,111 @@
+#!/usr/bin/env node
+var docopt = require('docopt')
+var fs = require('fs')
+var lamos = require('lamos')
+var mkdirp = require('mkdirp')
+var mustache = require('mustache')
+var path = require('path')
+
+var usage = `
+Create an web page to work through a detree decition tree.
+
+Usage: detree-html -d DATA -o DIRECTORY [options]
+
+Options:
+  -d DATA, --data DATA              Decision tree data file
+  -l TEMPLATE, --layout TEMPLATE    Mustache HTML template
+  -o DIRECTORY, --output DIRECTORY  Output directory
+  -t TITLE, --title TITLE           Website title
+`.trim()
+
+var options = docopt.docopt(usage)
+var data = fs.readFileSync(options['--data'], 'utf-8')
+var parsers = [JSON.parse, lamos.parse]
+var parsed
+for (var i = 0; i < parsers.length; i++) {
+  try {
+    parsed = parsers[i](data)
+  } catch (error) {
+    // pass
+  }
+}
+if (!parsed) {
+  console.error('Could not parse data file.')
+  process.exit(1)
+}
+
+var directory = options['--output']
+var title = options['--title'] || 'Decision Tree'
+var index = 'index.html'
+
+mkdirp.sync(directory)
+
+var layout = fs.readFileSync(
+  options['--layout'] ||
+  path.join(__dirname, 'layout.html'),
+  'utf8'
+)
+
+function createQuestionPages () {
+  Object.keys(parsed).forEach(function (questionKey) {
+    var question = parsed[questionKey]
+    var answers = question.answers
+    var view = {
+      title,
+      question: {
+        text: question.question,
+        answers: Object.keys(answers).map(function (answerKey) {
+          var answer = answers[answerKey]
+          return Object.assign(
+            {
+              text: answerKey,
+              href: answer.hasOwnProperty('goto')
+                ? answer.goto + '.html'
+                : decisionPageName(questionKey, answerKey) + '.html'
+            },
+            question
+          )
+        })
+      }
+    }
+    if (questionKey !== 'start') view.index = index
+    var basename = questionKey === 'start' ? 'index' : questionKey
+    fs.writeFileSync(
+      path.join(directory, basename + '.html'),
+      mustache.render(layout, view)
+    )
+  })
+}
+
+function createDecisionPages () {
+  Object.keys(parsed).forEach(function (questionKey) {
+    var question = parsed[questionKey]
+    var answers = question.answers
+    Object.keys(answers).forEach(function (answerKey) {
+      var answer = answers[answerKey]
+      if (!answer.hasOwnProperty('decision')) return
+      var view = {
+        title,
+        index,
+        decision: Object.assign(
+          {
+            text: answer.decision
+          },
+          answer
+        )
+      }
+      var basename = decisionPageName(questionKey, answerKey)
+      fs.writeFileSync(
+        path.join(directory, basename + '.html'),
+        mustache.render(layout, view)
+      )
+    })
+  })
+}
+
+function decisionPageName (questionKey, answerKey) {
+  return questionKey + '_' + answerKey
+}
+
+createQuestionPages()
+createDecisionPages()
