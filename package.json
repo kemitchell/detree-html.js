@@ -7,7 +7,7 @@
   "bin": "bin",
   "files": [
     "bin",
-    "template.html"
+    "layout.html"
   ],
   "license": "MIT",
   "dependencies": {
