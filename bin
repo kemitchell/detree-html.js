@@ -1,10 +1,13 @@
 #!/usr/bin/env node
-var docopt = require('docopt')
 var fs = require('fs')
 var lamos = require('lamos')
 var mkdirp = require('mkdirp')
 var mustache = require('mustache')
 var path = require('path')
+
+var originalEndsWith = String.prototype.endsWith
+var docopt = require('docopt')
+String.prototype.endsWith = originalEndsWith
 
 var usage = `
 Create an web page to work through a detree decision tree.
