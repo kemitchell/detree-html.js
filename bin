@@ -25,6 +25,7 @@ var parsed
 for (var i = 0; i < parsers.length; i++) {
   try {
     parsed = parsers[i](data)
+    break
   } catch (error) {
     // pass
   }
